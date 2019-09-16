@@ -1,0 +1,120 @@
+swagger: "2.0"
+info:
+  description: "This is a service that calculate the discount for a list of products."
+  version: "1.0.0"
+  title: "Promotions"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "apiteam@swagger.io"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+host: "promotions.io"
+basePath: "/"
+tags:
+  - name: "promotions"
+    description: "Everything about your promotions"
+    externalDocs:
+      description: "Find out more"
+      url: "http://swagger.io"
+schemes:
+  - "https"
+  - "http"
+paths:
+  /redeem-promotioncode:
+    post:
+      tags:
+        - "discount"
+      summary: "Get prices after discount"
+      description: ""
+      operationId: "getDiscount"
+      consumes:
+        - "application/json"
+      produces:
+        - "application/json"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "List of products before discount"
+          required: true
+          schema:
+            $ref: "#/definitions/Products"
+      responses:
+        200:
+          description: "Success"
+          schema:
+            $ref: "#/definitions/DiscountedProducts"
+        405:
+          description: "Invalid input"
+        404:
+          description: "Product not found"
+        500:
+          description: "Internal Server Error"
+
+
+      security:
+        - petstore_auth:
+            - "read:discount"
+
+securityDefinitions:
+  petstore_auth:
+    type: "oauth2"
+    authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+    flow: "implicit"
+    scopes:
+      read:discount: "read your discount"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+definitions:
+
+  Product:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      size:
+        type: "string"
+      colour:
+        type: "string"
+      price:
+        type: "number"
+        format: "float"
+  DiscountedProduct:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      size:
+        type: "string"
+      colour:
+        type: "string"
+      initialPrice:
+        type: "number"
+        format: "float"
+      discountedPrice:
+        type: "number"
+        format: "float"
+
+  Products:
+    type: "array"
+    items:
+      $ref: '#/definitions/Product'
+
+  DiscountedProducts:
+    type: "object"
+    properties:
+      totalDiscount:
+        type: "number"
+        format: "float"
+      discountedProducts:
+        type: "array"
+        items:
+          $ref: '#/definitions/DiscountedProduct'
+
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"
